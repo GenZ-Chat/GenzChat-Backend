@@ -1,0 +1,11 @@
+pnpm-workspace.yaml
+pnpm-lock.yaml
+DockerFile
+node_modules/
+dist/
+*.log
+*.env
+*.DS_Store
+.vscode/
+.idea/
+*.md    
