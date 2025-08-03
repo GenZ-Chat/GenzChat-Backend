@@ -3,8 +3,12 @@ import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'users' })
 export class User {
+  @Prop({ required: true })
+  name: string;
+
+
   @Prop({ required: true, unique: true })
   email: string;
 

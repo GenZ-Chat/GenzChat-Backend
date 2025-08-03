@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
+import { FriendDTO, FriendStatus } from './dto/friends_dto';
 import * as bcrypt from 'bcryptjs';
 
 export interface CreateUserDto {
@@ -92,17 +93,25 @@ export class UsersService {
     return user.save();
   }
 
-  async getFriends(userId: string): Promise<User[]> {
+  async getFriends(userId: string): Promise<FriendDTO[]> {
+    const id = new Types.ObjectId(userId);
     const user = await this.userModel
-      .findById(userId)
+      .findById(id)
       .populate('friends', 'name')
       .exec();
-    
     if (!user) {
       throw new Error('User not found');
     }
+    const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string }>;
 
-    return user.friends as unknown as User[];
+    const friends: FriendDTO[] = k.map((friend) => ({
+        id: friend._id.toString(),
+        name: friend.name,
+        status: FriendStatus.OFFLINE,
+
+    }));
+
+    return friends;
   }
 
   async validatePassword(email: string, password: string): Promise<boolean> {

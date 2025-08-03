@@ -5,6 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
+import { MongooseConnectionTest } from './health/mongoose-connection.test';
+import { HealthController } from './health/health.controller';
+
 
 @Module({
   imports: [
@@ -15,7 +18,7 @@ import { ChatModule } from './chat/chat.module';
     UsersModule,
     ChatModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, HealthController],
+  providers: [AppService, MongooseConnectionTest],
 })
 export class AppModule {}

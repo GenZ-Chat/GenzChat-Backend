@@ -10,8 +10,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { UsersService, CreateUserDto, UpdateUserDto } from './users.service';
+import { FriendDTO } from './dto/friends_dto';
 
-@Controller('users')
+@Controller('api/users/')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -81,7 +82,7 @@ export class UsersController {
   }
 
   @Get(':id/friends')
-  async getFriends(@Param('id') id: string) {
+  async getFriends(@Param('id') id: string): Promise<FriendDTO[]> {
     try {
       const friends = await this.usersService.getFriends(id);
       return friends;
