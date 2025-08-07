@@ -6,5 +6,6 @@ export enum FriendStatus {
 export interface FriendDTO {
   id: string;
   name: string;
+  googleUserId?: string;
   status: FriendStatus;
 }

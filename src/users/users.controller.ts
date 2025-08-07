@@ -20,12 +20,14 @@ export class UsersController {
   async create(@Body() createUserDto: CreateUserDto) {
     try {
       const user = await this.usersService.create(createUserDto);
+      console.log('User created:', user);
       return user;
     } catch (error) {
       if ((error as any).code === 11000) {
         throw new HttpException('Email already exists', HttpStatus.CONFLICT);
       }
-      throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
+        console.error('Error creating user:', error);
+      throw new HttpException( error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -84,6 +86,7 @@ export class UsersController {
   @Get(':id/friends')
   async getFriends(@Param('id') id: string): Promise<FriendDTO[]> {
     try {
+        console.log(id) 
       const friends = await this.usersService.getFriends(id);
       return friends;
     } catch (error) {

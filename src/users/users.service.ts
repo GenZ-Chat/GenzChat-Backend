@@ -4,17 +4,21 @@ import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { FriendDTO, FriendStatus } from './dto/friends_dto';
 import * as bcrypt from 'bcryptjs';
+import {UserType} from './schemas/user.schema';
 
 export interface CreateUserDto {
-    name:string
+  name:string
   email: string;
-  password: string;
+  password?: string;
+  googleUserId?: string;
+  userType: UserType;
 }
 
 export interface UpdateUserDto {
-    name?:string;
+  name?:string;
   email?: string;
   password?: string;
+  googleUserId?: string;
 }
 
 @Injectable()
@@ -22,13 +26,25 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    // Hash password before saving
-    const saltRounds = 12;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    // Validate that either password or googleCredentialId is provided
+    // if (!createUserDto.password  !createUserDto.googleUserId) {
+    //   throw new Error('Either password or Google credential ID must be provided');
+    // }
+
+    let hashedPassword: string | undefined;
+    
+    // Hash password only if it's provided (for regular sign-up)
+    if (createUserDto.password) {
+      const saltRounds = 12;
+      hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
+    }
     
     const createdUser = new this.userModel({
-      ...createUserDto,
+      name: createUserDto.name,
+      email: createUserDto.email,
       password: hashedPassword,
+      googleUserId: createUserDto.googleUserId,
+      userType: createUserDto.userType,
     });
     
     return createdUser.save();
@@ -44,6 +60,10 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  async findByGoogleCredentialId(googleCredentialId: string): Promise<User | null> {
+    return this.userModel.findOne({ googleCredentialId }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
@@ -64,6 +84,7 @@ export class UsersService {
 
   async addFriend(userId: string, friendId: string): Promise<User> {
     const user = await this.userModel.findById(userId);
+    
     if (!user) {
       throw new Error('User not found');
     }
@@ -94,18 +115,22 @@ export class UsersService {
   }
 
   async getFriends(userId: string): Promise<FriendDTO[]> {
-    const id = new Types.ObjectId(userId);
-    const user = await this.userModel
-      .findById(id)
-      .populate('friends', 'name')
-      .exec();
+
+    var user =  await this.userModel.findOne({ googleUserId: userId }).populate('friends', 'name googleUserId');
+
+    console.log(user)
+    // const googleUser = await this.userModel.findOne({googleUserId:userId})
     if (!user) {
-      throw new Error('User not found');
+        if(!user){
+            throw new Error('User not found');
+        }
     }
-    const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string }>;
+
+    const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string;googleUserId:string}>;
 
     const friends: FriendDTO[] = k.map((friend) => ({
-        id: friend._id.toString(),
+        id: friend.googleUserId || friend._id.toString(),
+        googleUserId: friend.googleUserId,
         name: friend.name,
         status: FriendStatus.OFFLINE,
 
@@ -116,7 +141,7 @@ export class UsersService {
 
   async validatePassword(email: string, password: string): Promise<boolean> {
     const user = await this.findByEmail(email);
-    if (!user) {
+    if (!user || !user.password) {
       return false;
     }
     

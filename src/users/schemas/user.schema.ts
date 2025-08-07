@@ -3,6 +3,11 @@ import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
+export enum UserType {
+  REGULAR = 'regular',
+  GOOGLE = 'google',
+}
+
 @Schema({ timestamps: true, collection: 'users' })
 export class User {
   @Prop({ required: true })
@@ -12,8 +17,14 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   password: string;
+
+  @Prop({ required: false, unique: true, sparse: true })
+  googleUserId: string;
+
+  @Prop({required:true})
+  userType: UserType;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
   friends: Types.ObjectId[];
