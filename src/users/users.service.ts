@@ -9,15 +9,13 @@ import {UserType} from './schemas/user.schema';
 export interface CreateUserDto {
   name:string
   email: string;
-  password?: string;
-  googleUserId?: string;
+  auth0Id?: string;
   userType: UserType;
 }
 
 export interface UpdateUserDto {
   name?:string;
   email?: string;
-  password?: string;
   googleUserId?: string;
 }
 
@@ -26,24 +24,11 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    // Validate that either password or googleCredentialId is provided
-    // if (!createUserDto.password  !createUserDto.googleUserId) {
-    //   throw new Error('Either password or Google credential ID must be provided');
-    // }
-
-    let hashedPassword: string | undefined;
-    
-    // Hash password only if it's provided (for regular sign-up)
-    if (createUserDto.password) {
-      const saltRounds = 12;
-      hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
-    }
     
     const createdUser = new this.userModel({
       name: createUserDto.name,
       email: createUserDto.email,
-      password: hashedPassword,
-      googleUserId: createUserDto.googleUserId,
+      auth0Id: createUserDto.auth0Id,
       userType: createUserDto.userType,
     });
     
@@ -67,11 +52,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
-    if (updateUserDto.password) {
-      const saltRounds = 12;
-      updateUserDto.password = await bcrypt.hash(updateUserDto.password, saltRounds);
-    }
-    
+ 
     return this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true })
       .populate('friends', 'name')
@@ -116,7 +97,7 @@ export class UsersService {
 
   async getFriends(userId: string): Promise<FriendDTO[]> {
 
-    var user =  await this.userModel.findOne({ googleUserId: userId }).populate('friends', 'name googleUserId');
+    var user =  await this.userModel.findById(userId).populate('friends', 'name');
 
     console.log(user)
     // const googleUser = await this.userModel.findOne({googleUserId:userId})
@@ -139,12 +120,5 @@ export class UsersService {
     return friends;
   }
 
-  async validatePassword(email: string, password: string): Promise<boolean> {
-    const user = await this.findByEmail(email);
-    if (!user || !user.password) {
-      return false;
-    }
-    
-    return bcrypt.compare(password, user.password);
-  }
+
 }

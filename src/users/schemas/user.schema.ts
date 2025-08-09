@@ -4,7 +4,7 @@ import { Document, Types } from 'mongoose';
 export type UserDocument = User & Document;
 
 export enum UserType {
-  REGULAR = 'regular',
+  REGULAR = 'email',
   GOOGLE = 'google',
 }
 
@@ -13,15 +13,11 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: false })
-  password: string;
-
   @Prop({ required: false, unique: true, sparse: true })
-  googleUserId: string;
+  auth0Id: string;
 
   @Prop({required:true})
   userType: UserType;
