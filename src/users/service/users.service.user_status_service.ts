@@ -39,5 +39,11 @@ export class UserStatusService {
     }
     await this.cacheManager.del(userId);
   }
-
+printUserStatusKeys() {
+    // Cast to access store keys() (works for in-memory cache)
+    const store = this.cacheManager.stores;
+    for (const key of store.keys()) {
+      console.log(`User Status Cache Key: ${key}`);
+}
+}
 }

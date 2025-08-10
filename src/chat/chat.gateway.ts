@@ -3,6 +3,7 @@ import { WebSocketGateway, WebSocketServer,SubscribeMessage,MessageBody,Connecte
 import { Socket,Server } from 'socket.io';
 import { UserStatusService } from 'src/users/service/users.service.user_status_service';
 
+
 @WebSocketGateway({
   cors:{origin: 'http://localhost:3000', methods: ['GET', 'POST'], credentials: true},
   namespace:'chat', transports: ['websocket','polling'],})
@@ -19,7 +20,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 async handleConnection(client: Socket, ...args: any[]) {
     console.log('Client connected:', client.id);
    this.userStatusService.setUserStatus(client.handshake.query.userId, client.id);
-   console.log("Cached:", await this.userStatusService.getUserStatus(client.handshake.query.userId));
+   this.userStatusService.printUserStatusKeys();
 }
 
 handleDisconnect(client: Socket) {
@@ -34,8 +35,8 @@ async handleEvent(@MessageBody() data: Map<string, any>,@ConnectedSocket() clien
     console.log(data)
     const receiver = data['receiver'];
 
-    console.log(await this.userStatusService.getUserStatus(receiver));
-    this.server.to(await this.userStatusService.getUserStatus(receiver) as string).emit('events', data['message']);
+    console.log(await this.userStatusService.getSocketId(receiver));
+    this.server.to(await this.userStatusService.getSocketId(receiver) as string).emit('events', data['message']);
   return data;
 }
 
