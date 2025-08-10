@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { FriendDTO, FriendStatus } from './dto/friends_dto';
 import * as bcrypt from 'bcryptjs';
 import {UserType} from './schemas/user.schema';
+import { UserStatusService } from './service/users.service.user_status_service';
 
 export interface CreateUserDto {
   name:string
@@ -21,7 +22,9 @@ export interface UpdateUserDto {
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @Inject() private userStatusService: UserStatusService,
+    @InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     
@@ -108,14 +111,18 @@ export class UsersService {
     }
 
     const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string;googleUserId:string}>;
+    k.forEach(async friend => {
+        console.log(`friend ${friend._id.toJSON()}:`, await this.userStatusService.getUserStatus(friend._id.toJSON()) || FriendStatus.OFFLINE);
+    });
+    const friends=  await Promise.all(k.map( async(friend) => (
+        {
 
-    const friends: FriendDTO[] = k.map((friend) => ({
         id: friend.googleUserId || friend._id.toString(),
         googleUserId: friend.googleUserId,
         name: friend.name,
-        status: FriendStatus.OFFLINE,
+        status: await this.userStatusService.getUserStatus(friend._id.toString()) || FriendStatus.OFFLINE
 
-    }));
+    })));
 
     return friends;
   }
