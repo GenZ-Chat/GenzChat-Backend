@@ -9,6 +9,7 @@ import { UserStatusService } from 'src/users/service/users.service.user_status_s
   namespace:'chat', transports: ['websocket','polling'],})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
+
   constructor(
     @Inject() private userStatusService: UserStatusService
   ) {}
@@ -19,8 +20,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 async handleConnection(client: Socket, ...args: any[]) {
     console.log('Client connected:', client.id);
-   this.userStatusService.setUserStatus(client.handshake.query.userId, client.id);
-   this.userStatusService.printUserStatusKeys();
+    const socketId = await this.userStatusService.getSocketId(client.handshake.query.userId);
+    this.userStatusService.setUserStatus(client.handshake.query.userId, client.id);
+    this.userStatusService.printUserStatusKeys();
+
 }
 
 handleDisconnect(client: Socket) {
@@ -30,7 +33,7 @@ handleDisconnect(client: Socket) {
 }
 //   Call this method to disconnect all users
 
-@SubscribeMessage('events')
+@SubscribeMessage('events') 
 async handleEvent(@MessageBody() data: Map<string, any>,@ConnectedSocket() client: Socket,) {
     console.log(data)
     const receiver = data['receiver'];

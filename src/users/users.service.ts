@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import { FriendDTO, FriendStatus } from './dto/friends_dto';
-import * as bcrypt from 'bcryptjs';
 import {UserType} from './schemas/user.schema';
 import { UserStatusService } from './service/users.service.user_status_service';
 
@@ -48,6 +47,10 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+
+  async findByAuth0Id(auth0Id: string): Promise<User | null> {
+    return this.userModel.findOne({ auth0Id }).exec();
   }
 
   async findByGoogleCredentialId(googleCredentialId: string): Promise<User | null> {

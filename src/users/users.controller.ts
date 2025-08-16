@@ -45,6 +45,15 @@ export class UsersController {
     return user;
   }
 
+  @Get('auth0/:id')
+  async findByAuth0Id(@Param('id') id: string) {
+    const user = await this.usersService.findByAuth0Id(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.usersService.update(id, updateUserDto);
