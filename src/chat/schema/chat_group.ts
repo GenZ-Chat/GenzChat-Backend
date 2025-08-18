@@ -4,6 +4,6 @@ export class ChatGroup {
     @Prop({ required: true })
     name: string;
     
-    image: string;
+    image?: string;
     description: string;
 }

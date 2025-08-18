@@ -72,34 +72,34 @@ export class UsersController {
     return { message: 'User deleted successfully' };
   }
 
-  @Post(':id/friends/:friendId')
-  async addFriend(@Param('id') id: string, @Param('friendId') friendId: string) {
-    try {
-      const user = await this.usersService.addFriend(id, friendId);
-      return user;
-    } catch (error) {
-      throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post(':id/friends/:friendId')
+  // async addFriend(@Param('id') id: string, @Param('friendId') friendId: string) {
+  //   try {
+  //     const user = await this.usersService.addFriend(id, friendId);
+  //     return user;
+  //   } catch (error) {
+  //     throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Delete(':id/friends/:friendId')
-  async removeFriend(@Param('id') id: string, @Param('friendId') friendId: string) {
-    try {
-      const user = await this.usersService.removeFriend(id, friendId);
-      return user;
-    } catch (error) {
-      throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Delete(':id/friends/:friendId')
+  // async removeFriend(@Param('id') id: string, @Param('friendId') friendId: string) {
+  //   try {
+  //     const user = await this.usersService.removeFriend(id, friendId);
+  //     return user;
+  //   } catch (error) {
+  //     throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Get(':id/friends')
-  async getFriends(@Param('id') id: string): Promise<FriendDTO[]> {
-    try {
-        console.log(id) 
-      const friends = await this.usersService.getFriends(id);
-      return friends;
-    } catch (error) {
-      throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Get(':id/friends')
+  // async getFriends(@Param('id') id: string): Promise<FriendDTO[]> {
+  //   try {
+  //       console.log(id) 
+  //     const friends = await this.usersService.getFriends(id);
+  //     return friends;
+  //   } catch (error) {
+  //     throw new HttpException((error as Error).message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 }

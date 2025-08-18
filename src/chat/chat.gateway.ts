@@ -23,6 +23,7 @@ async handleConnection(client: Socket, ...args: any[]) {
     const socketId = await this.userStatusService.getSocketId(client.handshake.query.userId);
     this.userStatusService.setUserStatus(client.handshake.query.userId, client.id);
     this.userStatusService.printUserStatusKeys();
+    //fetch groups for this user
 
 }
 

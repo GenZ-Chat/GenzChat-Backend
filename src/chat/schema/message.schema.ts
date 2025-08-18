@@ -1,4 +1,4 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Types } from "mongoose";
 
 @Schema({ timestamps: true, collection: 'messages' })
@@ -17,6 +17,8 @@ export class Message{
 
     timestamps: TimeStamps;
 }
+
+export const MessageSchema = SchemaFactory.createForClass(Message);
 
 class TimeStamps{
     @Prop({ default: Date.now })

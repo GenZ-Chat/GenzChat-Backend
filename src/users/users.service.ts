@@ -69,66 +69,66 @@ export class UsersService {
     return this.userModel.findByIdAndDelete(id).exec();
   }
 
-  async addFriend(userId: string, friendId: string): Promise<User> {
-    const user = await this.userModel.findById(userId);
+  // async addFriend(userId: string, friendId: string): Promise<User> {
+  //   const user = await this.userModel.findById(userId);
     
-    if (!user) {
-      throw new Error('User not found');
-    }
+  //   if (!user) {
+  //     throw new Error('User not found');
+  //   }
 
-    const friendObjectId = new Types.ObjectId(friendId);
+  //   const friendObjectId = new Types.ObjectId(friendId);
     
-    // Check if friend is already added
-    if (user.friends.includes(friendObjectId)) {
-      throw new Error('Friend already added');
-    }
+  //   // Check if friend is already added
+  //   if (user.friends.includes(friendObjectId)) {
+  //     throw new Error('Friend already added');
+  //   }
 
-    user.friends.push(friendObjectId);
-    return user.save();
-  }
+  //   user.friends.push(friendObjectId);
+  //   return user.save();
+  // }
 
-  async removeFriend(userId: string, friendId: string): Promise<User> {
-    const user = await this.userModel.findById(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
+  // async removeFriend(userId: string, friendId: string): Promise<User> {
+  //   const user = await this.userModel.findById(userId);
+  //   if (!user) {
+  //     throw new Error('User not found');
+  //   }
 
-    const friendObjectId = new Types.ObjectId(friendId);
-    user.friends = user.friends.filter(
-      (friend) => !friend.equals(friendObjectId)
-    );
+  //   const friendObjectId = new Types.ObjectId(friendId);
+  //   user.friends = user.friends.filter(
+  //     (friend) => !friend.equals(friendObjectId)
+  //   );
     
-    return user.save();
-  }
+  //   return user.save();
+  // }
 
-  async getFriends(userId: string): Promise<FriendDTO[]> {
+  // async getFriends(userId: string): Promise<FriendDTO[]> {
 
-    var user =  await this.userModel.findById(userId).populate('friends', 'name');
+  //   var user =  await this.userModel.findById(userId).populate('friends', 'name');
 
-    console.log(user)
-    // const googleUser = await this.userModel.findOne({googleUserId:userId})
-    if (!user) {
-        if(!user){
-            throw new Error('User not found');
-        }
-    }
+  //   console.log(user)
+  //   // const googleUser = await this.userModel.findOne({googleUserId:userId})
+  //   if (!user) {
+  //       if(!user){
+  //           throw new Error('User not found');
+  //       }
+  //   }
 
-    const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string;googleUserId:string}>;
-    k.forEach(async friend => {
-        console.log(`friend ${friend._id.toJSON()}:`, await this.userStatusService.getUserStatus(friend._id.toJSON()) || FriendStatus.OFFLINE);
-    });
-    const friends=  await Promise.all(k.map( async(friend) => (
-        {
+  //   const k = user.friends as unknown as Array<{ _id: Types.ObjectId; name: string;googleUserId:string}>;
+  //   k.forEach(async friend => {
+  //       console.log(`friend ${friend._id.toJSON()}:`, await this.userStatusService.getUserStatus(friend._id.toJSON()) || FriendStatus.OFFLINE);
+  //   });
+  //   const friends=  await Promise.all(k.map( async(friend) => (
+  //       {
 
-        id: friend.googleUserId || friend._id.toString(),
-        googleUserId: friend.googleUserId,
-        name: friend.name,
-        status: await this.userStatusService.getUserStatus(friend._id.toString()) || FriendStatus.OFFLINE
+  //       id: friend.googleUserId || friend._id.toString(),
+  //       googleUserId: friend.googleUserId,
+  //       name: friend.name,
+  //       status: await this.userStatusService.getUserStatus(friend._id.toString()) || FriendStatus.OFFLINE
 
-    })));
+  //   })));
 
-    return friends;
-  }
+  //   return friends;
+  // }
 
 
 }
