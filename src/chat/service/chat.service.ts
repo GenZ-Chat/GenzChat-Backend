@@ -54,4 +54,9 @@ export class ChatService{
         const chatDTO = plainToInstance(ChatDto, enrichedChats, { excludeExtraneousValues: true });
         return chatDTO;
     }
+
+    async getGroupChatInfoByUserId(userId:string){
+        const groupChats = await this.chatModel.find({ type: ChatType.GROUP, users: userId }).populate('users').exec();
+        return groupChats;
+    }
 }
