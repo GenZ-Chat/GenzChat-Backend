@@ -38,7 +38,7 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().populate('friends', 'name').exec();
+    return this.userModel.find().exec();
   }
 
   async findOne(id: string): Promise<User | null> {
@@ -50,7 +50,7 @@ export class UsersService {
   }
 
   async findByAuth0Id(auth0Id: string): Promise<User | null> {
-    return this.userModel.findOne({ auth0Id }).exec();
+    return this.userModel.findOne({auth0Id: auth0Id }).exec();
   }
 
   async findByGoogleCredentialId(googleCredentialId: string): Promise<User | null> {

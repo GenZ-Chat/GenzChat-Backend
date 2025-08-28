@@ -48,6 +48,7 @@ export class UsersController {
   @Get('auth0/:id')
   async findByAuth0Id(@Param('id') id: string) {
     const user = await this.usersService.findByAuth0Id(id);
+    console.log(user);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }

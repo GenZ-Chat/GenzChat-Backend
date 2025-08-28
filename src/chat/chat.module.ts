@@ -5,11 +5,13 @@ import { ChatService } from './service/chat.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {ChatSchema} from "./schema/chat.schema"
 import { MessageSchema } from './schema/message.schema';
+import { ChatMessageController } from './chat.message.controller';
+import { ChatMessageService } from './service/message/chat.message.service';
 
 @Module({
-  providers: [ChatGateway,ChatService],
-  controllers: [ChatController],
-  exports: [ChatService],
-  imports:[MongooseModule.forFeature([{ name: 'Chat', schema: ChatSchema },{ name: 'Message', schema: MessageSchema }])]
+  providers: [ChatGateway,ChatService,ChatMessageService],
+  controllers: [ChatController,ChatMessageController],
+  exports: [ChatService,ChatMessageService],
+  imports:[MongooseModule.forFeature([{ name: 'Chat', schema: ChatSchema },{ name: 'Message', schema: MessageSchema },{name:'Message',schema:MessageSchema}])]
 })
 export class ChatModule {}

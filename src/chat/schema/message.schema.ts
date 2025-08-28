@@ -6,6 +6,9 @@ export class Message{
     @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
     sender: Types.ObjectId;
 
+    @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+    receiver: Types.ObjectId;
+
     @Prop({ required: true, type: Types.ObjectId, ref: 'Chat' })
     chat: Types.ObjectId;
 
@@ -15,7 +18,8 @@ export class Message{
     @Prop({ type: [Types.ObjectId], ref: 'Media',default: [] })
     attachments: Types.Array<Types.ObjectId>;
 
-    timestamps: TimeStamps;
+    @Prop({ default: Date.now })
+    updatedAt: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

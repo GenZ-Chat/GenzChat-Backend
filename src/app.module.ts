@@ -15,9 +15,16 @@ import { UserStatusModule } from './users/user_status_module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: false,
+      isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || 'mongodb://localhost:27017/genz-chat'),
+    MongooseModule.forRoot(
+      (() => {
+        if (!process.env.MONGODB_URI) {
+          throw new Error('MONGODB_URI environment variable is not set.');
+        }
+        return process.env.MONGODB_URI;
+      })()
+    ),
     UsersModule,
     UserStatusModule,
     // Register CacheModule globally
