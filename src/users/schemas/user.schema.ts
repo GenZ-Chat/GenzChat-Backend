@@ -1,0 +1,38 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+
+export type UserDocument = User & Document;
+
+export enum UserType {
+  REGULAR = 'email',
+  GOOGLE = 'google',
+}
+
+@Schema({ timestamps: true, collection: 'users' })
+export class User {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true, unique: true })
+  email: string;
+
+  @Prop({ required: false, unique: true, sparse: true })
+  auth0Id: string;
+
+  @Prop({required:true})
+  userType: UserType;
+
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+
+// Add index for email for faster queries
+UserSchema.index({ email: 1 });
+
+// Transform the output to remove password field by default
+UserSchema.set('toJSON', {
+  transform: function(doc, ret) {
+    delete (ret as any).password;
+    return ret;
+  }
+});
