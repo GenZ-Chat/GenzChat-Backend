@@ -1,15 +1,13 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema } from '@nestjs/mongoose';
 
 @Schema({ timestamps: true, collection: 'media' })
 export class Media {
+  @Prop({ required: true })
+  url: string;
 
-    @Prop({ required: true })
-    url: string;
+  @Prop({ required: true })
+  type: string;
 
-    @Prop({ required: true })
-    type: string;
-
-    @Prop({ required: true })
-    size: number;
-
+  @Prop({ required: true })
+  size: number;
 }

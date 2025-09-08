@@ -11,7 +11,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { UserStatusService } from './users/service/users.service.user_status_service';
 import { UserStatusModule } from './users/user_status_module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,7 +22,7 @@ import { UserStatusModule } from './users/user_status_module';
           throw new Error('MONGODB_URI environment variable is not set.');
         }
         return process.env.MONGODB_URI;
-      })()
+      })(),
     ),
     UsersModule,
     UserStatusModule,
@@ -34,6 +33,6 @@ import { UserStatusModule } from './users/user_status_module';
     ChatModule,
   ],
   controllers: [AppController, HealthController],
-  providers: [AppService, MongooseConnectionTest,UserStatusService],
+  providers: [AppService, MongooseConnectionTest, UserStatusService],
 })
 export class AppModule {}

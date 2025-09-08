@@ -12,7 +12,7 @@ export class MongooseConnectionTest implements OnModuleInit {
 
   private testConnection() {
     console.log('🔍 Testing Mongoose Connection...');
-    
+
     // Check connection state
     const states = {
       0: 'disconnected',
@@ -21,7 +21,9 @@ export class MongooseConnectionTest implements OnModuleInit {
       3: 'disconnecting',
     };
 
-    console.log(`📊 Connection State: ${states[this.connection.readyState]} (${this.connection.readyState})`);
+    console.log(
+      `📊 Connection State: ${states[this.connection.readyState]} (${this.connection.readyState})`,
+    );
     console.log(`🏠 Database Host: ${this.connection.host}`);
     console.log(`📦 Database Name: ${this.connection.name}`);
     console.log(`🔌 Database Port: ${this.connection.port}`);
@@ -46,27 +48,32 @@ export class MongooseConnectionTest implements OnModuleInit {
   private async testDatabaseOperation() {
     try {
       console.log('🧪 Testing database operation...');
-      
+
       if (!this.connection.db) {
         console.log('❌ Database not available');
         return;
       }
-      
+
       // Simple ping to test connection
       const admin = this.connection.db.admin();
       const result = await admin.ping();
-      
+
       if (result.ok === 1) {
         console.log('✅ Database ping successful - Connection is working!');
-        
+
         // List collections to verify access
-        const collections = await this.connection.db.listCollections().toArray();
-        console.log(`📋 Available collections: ${collections.map(c => c.name).join(', ') || 'No collections found'}`);
-        
+        const collections = await this.connection.db
+          .listCollections()
+          .toArray();
+        console.log(
+          `📋 Available collections: ${collections.map((c) => c.name).join(', ') || 'No collections found'}`,
+        );
+
         // Check database stats
         const stats = await this.connection.db.stats();
-        console.log(`💾 Database stats: ${stats.collections} collections, ${stats.objects} documents`);
-        
+        console.log(
+          `💾 Database stats: ${stats.collections} collections, ${stats.objects} documents`,
+        );
       } else {
         console.log('❌ Database ping failed');
       }
@@ -90,7 +97,7 @@ export class MongooseConnectionTest implements OnModuleInit {
       host: this.connection.host,
       name: this.connection.name,
       port: this.connection.port,
-      isConnected: this.connection.readyState === 1
+      isConnected: this.connection.readyState === 1,
     };
   }
 }

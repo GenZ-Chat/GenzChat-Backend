@@ -1,20 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import { FriendDTO, FriendStatus } from './dto/friends_dto';
-import {UserType} from './schemas/user.schema';
+import { UserType } from './schemas/user.schema';
 import { UserStatusService } from './service/users.service.user_status_service';
 
 export interface CreateUserDto {
-  name:string
+  name: string;
   email: string;
   auth0Id?: string;
   userType: UserType;
 }
 
 export interface UpdateUserDto {
-  name?:string;
+  name?: string;
   email?: string;
   googleUserId?: string;
 }
@@ -23,17 +22,17 @@ export interface UpdateUserDto {
 export class UsersService {
   constructor(
     @Inject() private userStatusService: UserStatusService,
-    @InjectModel(User.name) private userModel: Model<UserDocument>) {}
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    
     const createdUser = new this.userModel({
       name: createUserDto.name,
       email: createUserDto.email,
       auth0Id: createUserDto.auth0Id,
       userType: createUserDto.userType,
     });
-    
+
     return createdUser.save();
   }
 
@@ -50,15 +49,16 @@ export class UsersService {
   }
 
   async findByAuth0Id(auth0Id: string): Promise<User | null> {
-    return this.userModel.findOne({auth0Id: auth0Id }).exec();
+    return this.userModel.findOne({ auth0Id: auth0Id }).exec();
   }
 
-  async findByGoogleCredentialId(googleCredentialId: string): Promise<User | null> {
+  async findByGoogleCredentialId(
+    googleCredentialId: string,
+  ): Promise<User | null> {
     return this.userModel.findOne({ googleCredentialId }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User | null> {
- 
     return this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true })
       .populate('friends', 'name')
@@ -71,13 +71,13 @@ export class UsersService {
 
   // async addFriend(userId: string, friendId: string): Promise<User> {
   //   const user = await this.userModel.findById(userId);
-    
+
   //   if (!user) {
   //     throw new Error('User not found');
   //   }
 
   //   const friendObjectId = new Types.ObjectId(friendId);
-    
+
   //   // Check if friend is already added
   //   if (user.friends.includes(friendObjectId)) {
   //     throw new Error('Friend already added');
@@ -97,7 +97,7 @@ export class UsersService {
   //   user.friends = user.friends.filter(
   //     (friend) => !friend.equals(friendObjectId)
   //   );
-    
+
   //   return user.save();
   // }
 
@@ -129,6 +129,4 @@ export class UsersService {
 
   //   return friends;
   // }
-
-
 }

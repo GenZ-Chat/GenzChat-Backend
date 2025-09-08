@@ -19,9 +19,8 @@ export class User {
   @Prop({ required: false, unique: true, sparse: true })
   auth0Id: string;
 
-  @Prop({required:true})
+  @Prop({ required: true })
   userType: UserType;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -31,8 +30,8 @@ UserSchema.index({ email: 1 });
 
 // Transform the output to remove password field by default
 UserSchema.set('toJSON', {
-  transform: function(doc, ret) {
+  transform: function (doc, ret) {
     delete (ret as any).password;
     return ret;
-  }
+  },
 });
