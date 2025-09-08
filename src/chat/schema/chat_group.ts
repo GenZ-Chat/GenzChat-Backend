@@ -1,9 +1,9 @@
-import { Prop } from "@nestjs/mongoose";
+import { Prop } from '@nestjs/mongoose';
 
 export class ChatGroup {
-    @Prop({ required: true })
-    name: string;
-    
-    image?: string;
-    description: string;
+  @Prop({ required: true })
+  name: string;
+
+  image?: string;
+  description: string;
 }

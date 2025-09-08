@@ -22,7 +22,7 @@ export class HealthController {
       name: this.connection.name,
       port: this.connection.port,
       isConnected: this.connection.readyState === 1,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     // Test database operation
@@ -30,34 +30,36 @@ export class HealthController {
       if (this.connection.db) {
         const admin = this.connection.db.admin();
         const pingResult = await admin.ping();
-        
-        const collections = await this.connection.db.listCollections().toArray();
+
+        const collections = await this.connection.db
+          .listCollections()
+          .toArray();
         const stats = await this.connection.db.stats();
 
         return {
           status: 'healthy',
           connection: connectionStatus,
           ping: pingResult,
-          collections: collections.map(c => c.name),
+          collections: collections.map((c) => c.name),
           stats: {
             collections: stats.collections,
             objects: stats.objects,
             dataSize: stats.dataSize,
-            storageSize: stats.storageSize
-          }
+            storageSize: stats.storageSize,
+          },
         };
       } else {
         return {
           status: 'unhealthy',
           connection: connectionStatus,
-          error: 'Database not available'
+          error: 'Database not available',
         };
       }
     } catch (error: any) {
       return {
         status: 'unhealthy',
         connection: connectionStatus,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -65,17 +67,17 @@ export class HealthController {
   @Get()
   async checkOverallHealth() {
     const dbHealth = await this.checkDatabaseHealth();
-    
+
     return {
       timestamp: new Date().toISOString(),
       status: dbHealth.status === 'healthy' ? 'healthy' : 'degraded',
       services: {
         database: dbHealth.status,
-        api: 'healthy'
+        api: 'healthy',
       },
       details: {
-        database: dbHealth
-      }
+        database: dbHealth,
+      },
     };
   }
 }
